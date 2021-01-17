@@ -6,7 +6,7 @@ import kotlinx.coroutines.withContext
 import retrofit2.Call
 
 class ContactRepositoryImpl(private val service: PicPayService = RetrofitService.getService()) : ContactRepository{
-    override suspend fun getContacts(): Call<List<User>> =
+    override suspend fun getContacts(): List<User> =
         withContext(Dispatchers.IO) {
             service.getUsers()
         }

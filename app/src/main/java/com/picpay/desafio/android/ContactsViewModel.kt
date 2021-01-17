@@ -3,25 +3,25 @@ package com.picpay.desafio.android
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.picpay.desafio.android.base.BaseViewModel
 import com.picpay.desafio.android.network.RetrofitService
+import kotlinx.coroutines.launch
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-class ContactsViewModel (private val contactRepository: ContactRepository) : ViewModel() {
+class ContactsViewModel (private val contactRepository: ContactRepository) : BaseViewModel() {
     val command = MutableLiveData<ContactsCommand>()
 
     fun requestContacts () {
-        Log.e("Andre", contactRepository.toString())
-        RetrofitService.getService().getUsers()
-            .enqueue(object : Callback<List<User>> {
-                override fun onFailure(call: Call<List<User>>, t: Throwable) {
-                    command.value = ContactsCommand.ShowError(error = true)
-                }
+        launch {
+            try {
+                val response = contactRepository.getContacts()
+                command.value = ContactsCommand.ShowContacts(response)
+            } catch (exception: Exception){
+                command.value = ContactsCommand.ShowError(error = true)
 
-                override fun onResponse(call: Call<List<User>>, response: Response<List<User>>) {
-                    command.value = response.body()?.let { ContactsCommand.ShowContacts(it) }
-                }
-            })
+            }
+        }
     }
 }
