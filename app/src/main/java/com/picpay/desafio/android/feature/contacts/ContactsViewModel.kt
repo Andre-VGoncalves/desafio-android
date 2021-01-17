@@ -1,14 +1,9 @@
-package com.picpay.desafio.android
+package com.picpay.desafio.android.feature.contacts
 
-import android.util.Log
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
+import com.picpay.desafio.android.repository.ContactRepository
 import com.picpay.desafio.android.base.BaseViewModel
-import com.picpay.desafio.android.network.RetrofitService
 import kotlinx.coroutines.launch
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
 
 class ContactsViewModel (private val contactRepository: ContactRepository) : BaseViewModel() {
     val command = MutableLiveData<ContactsCommand>()
