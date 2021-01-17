@@ -8,7 +8,7 @@ import kotlin.coroutines.CoroutineContext
 
 abstract class BaseViewModel: ViewModel(), CoroutineScope {
     private val job = Job()
-    override val coroutineContext: CoroutineContext = job + Dispatchers.Main
+    override var coroutineContext: CoroutineContext = job + Dispatchers.Main
 
     override fun onCleared() {
         job.cancel()
