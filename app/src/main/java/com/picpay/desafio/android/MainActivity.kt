@@ -4,6 +4,8 @@ import android.view.View
 import android.widget.ProgressBar
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.gson.Gson
@@ -21,6 +23,7 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
     private lateinit var recyclerView: RecyclerView
     private lateinit var progressBar: ProgressBar
     private lateinit var adapter: UserListAdapter
+    private lateinit var viewModel: ContactsViewModel
 
     override fun onResume() {
         super.onResume()
@@ -31,25 +34,31 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
         adapter = UserListAdapter()
         recyclerView.adapter = adapter
         recyclerView.layoutManager = LinearLayoutManager(this)
-
+        viewModel = ViewModelProvider(this).get(ContactsViewModel::class.java)
+        setObservers()
+        viewModel.requestContacts()
         progressBar.visibility = View.VISIBLE
-        getService().getUsers()
-            .enqueue(object : Callback<List<User>> {
-                override fun onFailure(call: Call<List<User>>, t: Throwable) {
-                    val message = getString(R.string.error)
 
-                    progressBar.visibility = View.GONE
-                    recyclerView.visibility = View.GONE
+    }
+    private fun setObservers() {
+        viewModel.command.observe(this, Observer {
+            when (it) {
+                is ContactsCommand.ShowContacts -> showContacts(it.contactList)
+                is ContactsCommand.ShowError -> showError()
+            }
+        })
+    }
+    private fun showError() {
+        progressBar.visibility = View.GONE
+        recyclerView.visibility = View.GONE
 
-                    Toast.makeText(this@MainActivity, message, Toast.LENGTH_SHORT)
-                        .show()
-                }
+        Toast.makeText(this@MainActivity, getString(R.string.error), Toast.LENGTH_SHORT)
+            .show()
+    }
 
-                override fun onResponse(call: Call<List<User>>, response: Response<List<User>>) {
-                    progressBar.visibility = View.GONE
+    private fun showContacts(contacts : List<User>) {
+        progressBar.visibility = View.GONE
 
-                    adapter.users = response.body()!!
-                }
-            })
+        adapter.users = contacts
     }
 }
