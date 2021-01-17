@@ -1,7 +1,6 @@
 package com.picpay.desafio.android
 
-import android.view.View
-import android.widget.Toast
+import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.picpay.desafio.android.network.RetrofitService
@@ -9,10 +8,11 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-class ContactsViewModel : ViewModel() {
+class ContactsViewModel (private val contactRepository: ContactRepository) : ViewModel() {
     val command = MutableLiveData<ContactsCommand>()
 
     fun requestContacts () {
+        Log.e("Andre", contactRepository.toString())
         RetrofitService.getService().getUsers()
             .enqueue(object : Callback<List<User>> {
                 override fun onFailure(call: Call<List<User>>, t: Throwable) {

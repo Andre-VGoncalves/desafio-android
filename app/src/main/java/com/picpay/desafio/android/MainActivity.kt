@@ -8,22 +8,15 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.google.gson.Gson
-import com.google.gson.GsonBuilder
-import com.picpay.desafio.android.network.RetrofitService.getService
-import okhttp3.OkHttpClient
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
+import org.koin.androidx.viewmodel.ext.android.viewModel
+
 
 class MainActivity : AppCompatActivity(R.layout.activity_main) {
 
     private lateinit var recyclerView: RecyclerView
     private lateinit var progressBar: ProgressBar
     private lateinit var adapter: UserListAdapter
-    private lateinit var viewModel: ContactsViewModel
+    private val viewModel: ContactsViewModel by viewModel()
 
     override fun onResume() {
         super.onResume()
@@ -34,7 +27,6 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
         adapter = UserListAdapter()
         recyclerView.adapter = adapter
         recyclerView.layoutManager = LinearLayoutManager(this)
-        viewModel = ViewModelProvider(this).get(ContactsViewModel::class.java)
         setObservers()
         viewModel.requestContacts()
         progressBar.visibility = View.VISIBLE
